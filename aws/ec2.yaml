@@ -1,0 +1,478 @@
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+  StackName:
+    Type: String
+    Default: "sustaintracker"
+
+Description: sustaintracker
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/24
+      EnableDnsHostnames: "true"
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: !Sub "${StackName}-${Environment}"
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    DependsOn: VPC
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub "${StackName}-${Environment}"
+
+  VPCGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref VPC
+
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "eu-west-1a"
+      CidrBlock: 10.0.0.0/25
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${StackName}-${Environment}-subnet1"
+
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: "eu-west-1b"
+      CidrBlock: 10.0.0.128/25
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub "${StackName}-${Environment}-subnet2"
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: Public
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+
+  SubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupName: !Sub "${StackName}-${Environment}"
+      DBSubnetGroupDescription: !Sub "Sustaintracker ${Environment} subnet group for app/db"
+      SubnetIds:
+        - !Ref PublicSubnet1
+        - !Ref PublicSubnet2
+
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    DependsOn:
+      - VPC
+    Properties:
+      GroupDescription: "Allow HTTP/HTTPS and SSH inbound and outbound traffic"
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIpv6: ::/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub "${StackName}-${Environment}-ec2-security-group"
+
+  DBSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    DependsOn:
+      - VPC
+    Properties:
+      GroupDescription: "RDS Security Group"
+      SecurityGroupEgress:
+        - Description: "deny all outbound"
+          IpProtocol: "-1"
+          CidrIp: "127.0.0.1/32"
+      SecurityGroupIngress:
+        - Description: "permit MySQL (3306) from EC2 Security Group"
+          FromPort: 3306
+          IpProtocol: tcp
+          SourceSecurityGroupId: !GetAtt SecurityGroup.GroupId
+          ToPort: 3306
+        - Description: "Allow external connections on mysql"
+          IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: "0.0.0.0/0"
+      Tags:
+        - Key: Name
+          Value: !Sub "${StackName}-${Environment}-rds-security-group"
+      VpcId: !Ref VPC
+
+  EC2Ubuntu:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0f29c8402f8cce65c # ubuntu
+      InstanceType: t2.micro
+      KeyName: sustaintracker
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: "true"
+          DeviceIndex: "0"
+          GroupSet:
+            - !Ref SecurityGroup
+          SubnetId: !Ref PublicSubnet1
+      Tags:
+        - Key: Name
+          Value: !Sub "${StackName}-${Environment}-ubuntu"
+
+  RdsDB:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    Properties:
+      DBName: !Sub "${StackName}${Environment}"
+      AllocatedStorage: "5"
+      DBInstanceClass: db.t3.small
+      Engine: mysql
+      EngineVersion: 8.0.27
+      MasterUsername: sustaintrackerappuser
+      MasterUserPassword: NfpLTNx9ngXpuAR4Cktb
+      PubliclyAccessible: true
+      StorageEncrypted: true
+      DBSubnetGroupName: !Ref SubnetGroup
+      VPCSecurityGroups:
+        - !Ref DBSecurityGroup
+      Tags:
+        - Key: Name
+          Value: !Sub "${StackName}-${Environment}-rds"
+
+  S3CognitoUserFiles:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${StackName}-${Environment}-cognito-user-files"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods:
+              - GET
+              - HEAD
+              - PUT
+              - DELETE
+              - POST
+            AllowedOrigins:
+              - "*"
+            ExposedHeaders:
+              - authorization
+              - x-amz-content-sha256
+              - x-amz-date
+              - x-amz-security-token
+              - x-amz-user-agent
+              - content-type
+              - x-amz-acl
+              - x-amz-server-side-encryption
+              - x-amz-request-id
+              - x-amz-id-2
+              - ETag
+            AllowedHeaders:
+              - "*"
+
+  S3CompanyFiles:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${StackName}-${Environment}-company-files"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+          - AllowedMethods:
+              - GET
+              - HEAD
+              - PUT
+              - DELETE
+              - POST
+            AllowedOrigins:
+              - "*"
+            ExposedHeaders:
+              - authorization
+              - x-amz-content-sha256
+              - x-amz-date
+              - x-amz-security-token
+              - x-amz-user-agent
+              - content-type
+              - x-amz-acl
+              - x-amz-server-side-encryption
+              - x-amz-request-id
+              - x-amz-id-2
+              - ETag
+            AllowedHeaders:
+              - "*"
+
+  CognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: !Sub "${StackName}-${Environment}-userpool"
+      UsernameAttributes:
+        - email
+      AutoVerifiedAttributes:
+        - email
+      Schema:
+        - Name: name
+          Mutable: true
+        - Name: family_name
+          Mutable: true
+        - Name: phone_number
+          Mutable: true
+        - Name: picture
+          Mutable: true
+        - Name: last_seen
+          Mutable: true
+          AttributeDataType: String
+        - Name: role
+          Mutable: true
+          AttributeDataType: String
+        - Name: label
+          Mutable: true
+          AttributeDataType: String
+        - Name: companyId
+          Mutable: true
+          AttributeDataType: String
+
+  UserPoolClient:
+    Type: "AWS::Cognito::UserPoolClient"
+    Properties:
+      ClientName: !Sub "${StackName}-${Environment}-client"
+      GenerateSecret: false
+      UserPoolId: !Ref CognitoUserPool
+
+  IdentityPool:
+    Type: "AWS::Cognito::IdentityPool"
+    Properties:
+      IdentityPoolName: !Sub "${StackName}-${Environment}-identity-pool"
+      AllowUnauthenticatedIdentities: true
+      CognitoIdentityProviders:
+        - ClientId: !Ref UserPoolClient
+          ProviderName: !GetAtt CognitoUserPool.ProviderName
+
+  CognitoUnAuthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Federated: "cognito-identity.amazonaws.com"
+            Action:
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud": !Ref IdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+      Policies:
+        - PolicyName: "CognitoUnauthorizedPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "cognito-sync:*"
+                Resource: "*"
+
+  CognitoAuthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      Tags:
+        - Key: Role
+          Value: role
+        - Key: CompanyId
+          Value: companyId
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Federated: "cognito-identity.amazonaws.com"
+            Action:
+              - "sts:AssumeRoleWithWebIdentity"
+              - "sts:TagSession"
+            Condition:
+              StringEquals:
+                cognito-identity.amazonaws.com:aud:
+                  Ref: IdentityPool
+              ForAnyValue:StringLike:
+                cognito-identity.amazonaws.com:amr: authenticated
+      Policies:
+        - PolicyName: "CognitoAuthorizedPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              # S3 Cognito Files Statements
+              - Effect: "Allow"
+                Action:
+                  - "cognito-sync:*"
+                  - "cognito-identity:*"
+                  - "sts:TagSession"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - "lambda:InvokeFunction"
+                Resource: "*"
+              - Effect: "Allow"
+                Action:
+                  - s3:ListBucket
+                Resource:
+                  - !Join ["", ["arn:aws:s3:::", !Ref S3CognitoUserFiles]]
+                Condition:
+                  StringLike:
+                    s3:prefix:
+                      - public/,
+                      - public/*,
+                      - protected/,
+                      - protected/*,
+                      - !Join [
+                          "/",
+                          ["private", "${cognito-identity.amazonaws.com:sub}"],
+                        ]
+                      - !Join [
+                          "/",
+                          [
+                            "private",
+                            "${cognito-identity.amazonaws.com:sub}",
+                            "*",
+                          ],
+                        ]
+                # Allow users read access to any profile picture
+              - Effect: "Allow"
+                Action:
+                  - s3:GetObject
+                Resource:
+                  - !Join [
+                      "/",
+                      [
+                        !Join ["", ["arn:aws:s3:::", !Ref S3CognitoUserFiles]],
+                        "${AWS:PrincipalTag/companyId}",
+                        "*",
+                      ],
+                    ]
+                # Allow users to put/delete their own image
+              - Effect: "Allow"
+                Action:
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource:
+                  - !Join [
+                      "/",
+                      [
+                        !Join ["", ["arn:aws:s3:::", !Ref S3CognitoUserFiles]],
+                        "${aws:PrincipalTag/companyId}",
+                        "${cognito-identity.amazonaws.com:sub}",
+                        "profilepic",
+                      ],
+                    ]
+              # S3 Company Files Statements
+
+              #admin
+              - Effect: "Allow"
+                Action:
+                  - s3:ListBucket
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource:
+                  - !Join ["", ["arn:aws:s3:::", !Ref S3CompanyFiles]]
+                Condition:
+                  StringEquals:
+                    "AWS:PrincipalTag/role": "administrator"
+                  StringLike:
+                    s3:prefix: "${AWS:PrincipalTag/companyId}*"
+
+              #approver
+              - Effect: "Allow"
+                Action:
+                  - s3:ListBucket
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource:
+                  - !Join ["", ["arn:aws:s3:::", !Ref S3CompanyFiles]]
+                Condition:
+                  StringEquals:
+                    "AWS:PrincipalTag/role": "approver"
+                  StringLike:
+                    s3:prefix: "${AWS:PrincipalTag/companyId}*"
+
+              #user
+              - Effect: "Allow"
+                Action:
+                  - s3:ListBucket
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource:
+                  - !Join ["", ["arn:aws:s3:::", !Ref S3CompanyFiles]]
+                Condition:
+                  StringEquals:
+                    "AWS:PrincipalTag/role": "user"
+                  StringLike:
+                    s3:prefix: "${AWS:PrincipalTag/companyId}*"
+
+              #observer
+              - Effect: "Allow"
+                Action:
+                  - s3:ListBucket
+                  - s3:GetObject
+                Resource:
+                  - !Join ["", ["arn:aws:s3:::", !Ref S3CompanyFiles]]
+                Condition:
+                  StringEquals:
+                    "AWS:PrincipalTag/role": "observer"
+                  StringLike:
+                    s3:prefix: "${AWS:PrincipalTag/companyId}*"
+
+  IdentityPoolRoleMapping:
+    Type: "AWS::Cognito::IdentityPoolRoleAttachment"
+    Properties:
+      IdentityPoolId: !Ref IdentityPool
+      Roles:
+        authenticated: !GetAtt CognitoAuthorizedRole.Arn
+        unauthenticated: !GetAtt CognitoUnAuthorizedRole.Arn

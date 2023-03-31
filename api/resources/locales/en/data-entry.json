@@ -1,0 +1,116 @@
+{
+  "title": "My ESG Data",
+  "new-button": "NEW ANNUAL ESG DATA",
+  "table": {
+    "columns": {
+      "name": "Name",
+      "type": "Type",
+      "fiscal-year": "Fiscal Year",
+      "date-range": "Date Range",
+      "start-date": "Start Date",
+      "approval-date": "Approved Date",
+      "status": "Status",
+      "third-party-verification": "Third Party Verification",
+      "actions": "Actions"
+    },
+    "type": {
+      "annual": "Annual"
+    },
+    "view": "View",
+    "edit": "Edit",
+    "duplicate": "Duplicate"
+  },
+
+  "new": {
+    "title": "Create New ESG Dataset",
+    "name": "ESG Dataset Name",
+    "name-placeholder": "Name",
+    "name-required": "Please provide a name for the Dataset.",
+    "language": "Dataset Language",
+    "language-placeholder": "Select Language",
+    "type": "ESG Dataset Type",
+    "type-placeholder": "Select Type",
+    "year": "Select Year",
+    "year-placeholder": "Select Year",
+    "year-required": "Please select the year of the Dataset.",
+    "start": "Start Date",
+    "start-placeholder": "D-M-YYYY",
+    "start-required": "Please select a Start Date.",
+    "end": "End Date",
+    "end-placeholder": "D-M-YYYY",
+    "end-required": "Please select an End Date.",
+    "enter-button": "Enter Data"
+  },
+
+  "input": {
+    "title": "Input - {{dataset}}",
+    "review-title": "Review - {{dataset}}",
+    "desc": "The following are a series of simple questions to guide you through the process of compiling information for each ESG data point.\nPlease keep in mind that you should input the data for:\n    - the Entity you represent and the defined scope; and,\n    - the specific timeframe of the dataset, using the information available on the last day of the selected date range.",
+    "completed": "completed",
+    "save-button": "Save Changes",
+    "next-button": "Next",
+    "search": "Search by name",
+
+    "question": {
+      "tips": "Tips",
+      "response": "Response",
+      "yes": "Yes",
+      "no": "No",
+      "unit": "Unit",
+      "unit-placeholder": "Un",
+      "reasons-for-declining": "Reasons for Declining",
+      "not-applicable": "Not applicable",
+      "confidential": "Confidentiality constraints",
+      "prohibition": "Specific legal prohibitions",
+      "unavailable": "Information unavailable",
+      "explanation": "Explanation for Declining",
+      "comments": "Comments",
+      "decline-to-answer": "Decline to answer",
+      "evidence": "Supporting Evidence",
+      "no-file-selected": "No file selected",
+      "upload-file": "Upload or Select File from Dataroom",
+      "remove-file": "Remove Evidence",
+      "internal-comments": "Internal Comments",
+      "confidential-data": "Confidential data",
+      "prev-data": "Data from previous years",
+      "audit-trail": "Audit Trail",
+      "max-chars": "Max. 100 Characters"
+    },
+
+    "tips": {
+      "tips": "Tips",
+      "info-0": "Click",
+      "info-1": "to see helpful tips to assist in completing each data point."
+    },
+
+    "trail": {
+      "title": "Audit Trail",
+      "table": {
+        "date": "Date/Time",
+        "user": "User",
+        "dataset": "ESG Dataset",
+        "question": "Question",
+        "initial-response": "Initial Response",
+        "revised-response": "Revised Response"
+      },
+      "button": "OK"
+    }
+  },
+
+  "instructions": {
+    "title": "Instructions"
+  },
+
+  "review": {
+    "section": "Review",
+    "approve": "Approve this section",
+    "table": {
+      "indicator": "Accounting Metric / Indicator",
+      "unit": "Unit",
+      "status": "Status",
+      "actions": "Actions",
+      "edit": "Edit",
+      "approve": "Approve"
+    }
+  }
+}

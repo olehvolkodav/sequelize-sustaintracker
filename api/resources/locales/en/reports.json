@@ -1,0 +1,69 @@
+{
+  "reports": {
+    "title": "My Reports",
+    "new-report-button": "NEW REPORT",
+    "table": {
+      "columns": {
+        "name": "Name",
+        "type": "Type",
+        "model": "Model",
+        "year": "Year",
+        "approval-date": "Approval Date",
+        "author": "Author",
+        "verified": "Dataset Verified by Third Party",
+        "actions": "Actions"
+      },
+      "types": {
+        "annual": "Annual"
+      },
+      "actions": {
+        "view": "View",
+        "share": "Share",
+        "clone": "Clone",
+        "download": "Download"
+      }
+    }
+  },
+
+  "design-basics": {
+    "title": "Design Basics",
+    "subtitle": "Let's personalize your report",
+    "upload-logo": "Validate or upload your logo",
+    "upload-logo-info": "Please provide your logo in editable format (.png, .jpg, .svg). Logos provided in other formats may appear distorted.",
+    "upload-logo-text": "Upload your logo",
+    "upload-logo-text-2": "Max Size 300px - JPG, PNG and SVG",
+    "company-color": "Select your prefered company color",
+    "company-color-info-0": "Please provide your color in screen format (eg. #10b7ac) or choose from the palette.",
+    "color-preview": "Color preview",
+    "color-code": "Or input your company color code",
+    "hex": "Hex",
+    "available-styles": "There are three styles available for your CORE report. Please select the style you prefer.",
+    "core-report": "CORE REPORT",
+    "standard": "Standard",
+    "traditional": "Traditional",
+    "green": "Green",
+    "preview": "Preview",
+    "continue": "Continue"
+  },
+
+  "new": {
+    "title": "Create a New Report",
+    "name": "Report Name",
+    "name-required": "Please provide a name for the Report",
+    "type": "Type",
+    "type-required": "Please provide a type for the Report",
+    "model": "Model",
+    "model-required": "Please provide a model for the Report",
+    "year": "Reporting Year",
+    "year-required": "Please provide the year of the Report",
+    "dataset": "Select ESG Dataset(s)",
+    "dataset-required": "Please select the dataset(s) of the Report",
+    "continue": "Continue"
+  },
+
+  "editor": {
+    "title": "Report Editor - {{report}}",
+    "info": "Please select the KPIs that you want to include in the report. All KPIs are included by default.",
+    "save": "Save Changes"
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "account": {
+    "title": "Welcome {{firstName}}",
+    "save": "Save Changes",
+    "upload-photo": "Upload your photo",
+    "mr": "Mr.",
+    "ms": "Ms.",
+    "mx": "Mx.",
+    "first-name": "First Name",
+    "first-name-required": "Please enter your first name",
+    "last-name": "Last Name(s)",
+    "last-name-required": "Please enter your last name(s)",
+    "email": "Email",
+    "email-placeholder": "Email",
+    "email-required": "Please enter an email address",
+    "email-valid": "Please enter a valid email address",
+    "job": "Job Title",
+    "job-required": "Please enter your job title",
+    "language": "Language",
+    "language-required": "Please select your default language option",
+    "password": "Password",
+    "password-required": "Please provide a password",
+    "password-condition": "The password must match the conditions below",
+    "password-confirm": "Confirm password",
+    "password-match": "Passwords don't match",
+    "change-password": "Change your password",
+    "cancel-change-password": "Keep current password"
+  },
+
+  "company-settings": {
+    "title": "Company Settings",
+    "save": "Save Changes",
+    "company-settings": "Company Settings",
+    "team-members": "Team members",
+    "billing": "Billing",
+    "company": {
+      "language": "Language preference",
+      "language-placeholder": "Select language",
+      "currency": "Currency",
+      "currency-placeholder": "Select currency",
+      "currency-symbol": "Currency symbol",
+      "currency-symbol-placeholder": "Select placement",
+      "decimal-format": "Decimal format",
+      "decimal-format-placeholder": "Select decimal format",
+      "date-format": "Date format",
+      "date-format-placeholder": "Select date format"
+    },
+    "team": {
+      "table": {
+        "name": "Name",
+        "email": "Email",
+        "role": "Role",
+        "actions": "Actions",
+        "remove-access": "Remove Access",
+        "grant-access": "Grant Access"
+      },
+      "add-member": "Add team member",
+      "modal": {
+        "title": "Invite Team Members",
+        "subtitle": "Enter the e-mail of the team members you want to invite.",
+        "email": "Email",
+        "email-required": "Please enter an email address",
+        "email-valid": "Please enter a valid email address",
+        "role": "Role",
+        "role-required": "Please select a role for the new member",
+        "button": "Send invites"
+      }
+    }
+  }
+}

@@ -1,0 +1,74 @@
+{
+  "cancel": "Cancel",
+  "mandatory": "*Mandatory field",
+  "create-account": "Create Account",
+  "company-data": "Company Data",
+  "next-button": "Next",
+
+  "create": {
+    "title": "Create your account",
+    "create-account": "Create Account",
+    "company-data": "Company Data",
+    "mr": "Mr.",
+    "ms": "Ms.",
+    "mx": "Mx.",
+    "first-name": "First Name",
+    "first-name-required": "Please enter your first name",
+    "last-name": "Last Name(s)",
+    "last-name-required": "Please enter your last name(s)",
+    "job": "Job Title",
+    "job-required": "Please provide a job title.",
+    "password": "Password",
+    "password-required": "Please provide a password",
+    "password-condition": "The password must match the conditions below",
+    "password-confirm": "Confirm password",
+    "password-match": "Passwords don't match",
+    "terms-0": "I have read and agree to the ",
+    "terms-link": "Terms & Conditions",
+    "terms-1": " and ",
+    "privacy-policy-link": "Privacy Policy",
+    "terms-required": "You must accepts the Terms and Conditions"
+  },
+
+  "verification": {
+    "validation-code": "We've sent a validation code to your email",
+    "enter-code": "Enter the code in the fields below to continue your registration",
+    "reenter-link": "Please reenter your code or ",
+    "resend-link": "Click here",
+    "resend": " to resend the verification code.",
+    "invalid": "Invalid code."
+  },
+
+  "entity": {
+    "entity-info": "Please complete the information for the Entity you represent",
+    "country": "Country",
+    "country-required": "Please select a country",
+    "registration-number": "Business registration number or tax ID",
+    "entity-name": "Entity Name",
+    "entity-name-required": "Please provide an Entity Name",
+    "trading-as": "Trading as",
+    "address": "Address",
+    "address-required": "Please provide an Address",
+    "address-min": "Please provide at least one address",
+    "city": "City",
+    "city-required": "Please provide a City",
+    "postal-code": "Postal Code",
+    "postal-code-required": "Please provide a Postal Code",
+    "region": "Region/State",
+    "region-required": "Please provide the Region or State",
+    "add-address": "Add address",
+    "remove-address": "Remove address",
+    "website": "Website",
+    "country-code": "Country Code",
+    "phone-number": "Phone Number",
+    "add-phone": "Add phone",
+    "remove-phone": "Remove phone",
+    "success": "Account successfully created",
+    "get-started": "Get started"
+  },
+
+  "welcome": {
+    "account-created": "Account successfully created",
+    "get-started": "Get started"
+  }
+}

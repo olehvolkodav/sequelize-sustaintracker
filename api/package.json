@@ -1,0 +1,33 @@
+{
+  "main": "index.js",
+  "scripts": {
+    "start": "node -r dotenv/config ./index.js dotenv_config_path=.env",
+    "dev": "nodemon -r dotenv/config ./index.js dotenv_config_path=.env.development",
+    "test": "dotenv -- bash -c 'newman run https://api.getpostman.com/collections/$POSTMAN_TEST_COLLECTION_ID?apikey=$POSTMAN_API_KEY'",
+    "deploy": "yarn sync:live && yarn start",
+    "sync": "node -r dotenv/config ./sync.js dotenv_config_path=.env.development",
+    "sync:live": "node -r dotenv/config ./sync.js dotenv_config_path=.env",
+    "migrate": "dotenv -- sh -c 'npx sequelize-cli db:migrate'",
+    "seed": "npx sequelize-cli db:seed:all --debug"
+  },
+  "dependencies": {
+    "csv-parse": "^5.0.4",
+    "csv-stringify": "^6.0.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.1",
+    "faker": "^5.5.1",
+    "glob": "^7.2.0",
+    "lodash": "^4.17.21",
+    "mysql2": "^2.3.3-rc.0",
+    "sequelize": "^6.9.0",
+    "sequelize-binary-uuid": "^1.0.0",
+    "uuid": "^8.3.2",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "dotenv-cli": "^4.1.0",
+    "nodemon": "^2.0.15",
+    "sequelize-cli": "^6.3.0"
+  }
+}

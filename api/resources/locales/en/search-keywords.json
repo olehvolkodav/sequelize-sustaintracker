@@ -1,0 +1,28 @@
+{
+  "home": "Home",
+
+  "instructions": "My ESG Data: Instructions",
+  "data-entry": "My ESG Data: ESG Data Entry",
+  "new-dataset": "My ESG Data: New Dataset",
+
+  "esg-analytics": "My ESG Analytics",
+
+  "report-editor": "Reports: Report Editor",
+  "design-basics": "Reports: Design Basics My Reports",
+  "sub-reports": "Reports",
+  "new-report": "Reports: New Report",
+  "examples": "Reports: Examples",
+
+  "data-room": "My Data Room",
+
+  "verification": "Verification",
+
+  "definitions": "Resources: Definitions",
+  "external": "Resources: External Resources",
+  "help": "Resources: Help Center",
+  "policies": "Resources: Policies",
+
+  "account": "Settings: My Account",
+  "company-profile": "Settings: Company Profile",
+  "company-settings": "Company: Company Settings"
+}
